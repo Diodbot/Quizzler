@@ -14,7 +14,7 @@ export default function QuizzlerLanding() {
     window.addEventListener('mousemove', handleMouseMove);
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
-  const navigat=useNavigate()
+  const navigate=useNavigate()
 
   const handleAuthClick = () => {
         navigate('/auth');
