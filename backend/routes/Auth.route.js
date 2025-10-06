@@ -5,10 +5,10 @@ const authRouter=Router();
 authRouter.post("/signup", SignUp);
 authRouter.post("/login", login);
 authRouter.post("/logout",authmiddleware,logout);
-authRouter.get("/verify-email/:token", verifyEmail);
-authRouter.post("/reverify-email", reverifyEmail);
-authRouter.post("/forgot-password", sendResetPassword);
-authRouter.post("/reset-password/:token", resetpassword);
+// authRouter.get("/verify-email/:token", verifyEmail);
+// authRouter.post("/reverify-email", reverifyEmail);
+// authRouter.post("/forgot-password", sendResetPassword);
+// authRouter.post("/reset-password/:token", resetpassword);
 
 export default  authRouter
 
