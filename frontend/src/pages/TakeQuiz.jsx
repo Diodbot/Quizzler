@@ -175,20 +175,22 @@
 
 // export default TakeQuiz;
 
+// src/pages/TakeQuiz.jsx
+
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import api from '../api';
+import api from '../api'; // your axios instance
 import QuestionCard from '../component/QuestionCard';
 import AnimatedButton from '../component/AnimatedButton';
 
 const TakeQuiz = () => {
   const { quizId } = useParams();
 
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState(0); // 0 = user info form, 1+ = questions
   const [userInfo, setUserInfo] = useState({ firstName: '', lastName: '', email: '' });
-  const [questions, setQuestions] = useState([]);
+  const [questions, setQuestions] = useState([]); // question objects from backend
   const [testGiverId, setTestGiverId] = useState(null);
-  const [selectedOptions, setSelectedOptions] = useState({});
+  const [selectedOptions, setSelectedOptions] = useState({}); // mapping question index → selected option index
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -196,18 +198,19 @@ const TakeQuiz = () => {
   // Timer state in seconds (10 minutes = 600 seconds)
   const [timeLeft, setTimeLeft] = useState(600);
 
-  // Start timer when quiz starts (step >= 1)
+  // Format seconds as mm:ss
+  const formatTime = (seconds) => {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+  };
+
+  // Timer effect: start countdown after quiz starts (step >= 1)
   useEffect(() => {
-    if (step < 1) {
-      return; // no timer before quiz start
-    }
-
-    if (result) {
-      return; // no timer if quiz finished
-    }
-
+    if (step < 1) return; // no timer before quiz start
+    if (result) return; // stop timer when result shown
     if (timeLeft <= 0) {
-      // Time is up, submit the quiz automatically
+      // Auto-submit quiz when time runs out
       handleSubmit();
       return;
     }
@@ -216,7 +219,7 @@ const TakeQuiz = () => {
       setTimeLeft((prev) => prev - 1);
     }, 1000);
 
-    return () => clearInterval(timerId); // cleanup on unmount or step change
+    return () => clearInterval(timerId);
   }, [step, timeLeft, result]);
 
   const startQuiz = async () => {
@@ -278,13 +281,6 @@ const TakeQuiz = () => {
     }
   };
 
-  // Helper function to format seconds as mm:ss
-  const formatTime = (seconds) => {
-    const m = Math.floor(seconds / 60);
-    const s = seconds % 60;
-    return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-  };
-
   if (loading) {
     return <div className="text-white p-6">Loading...</div>;
   }
@@ -300,7 +296,14 @@ const TakeQuiz = () => {
             <div key={idx} className="p-4 bg-gray-800 rounded-lg">
               <h4 className="font-semibold">{quiz.questions[idx]?.question}</h4>
               <p>Your Answer: <span className="text-blue-400">{ans.selectedOption}</span></p>
-              <p>Correct Answer: <span className="text-green-400">{ans.isCorrect ? ans.selectedOption : quiz.questions[idx]?.options.find(opt => opt !== ans.selectedOption)}</span></p>
+              <p>
+                Correct Answer:{' '}
+                <span className="text-green-400">
+                  {ans.isCorrect
+                    ? ans.selectedOption
+                    : quiz.questions[idx]?.options.find((opt) => opt !== ans.selectedOption)}
+                </span>
+              </p>
             </div>
           ))}
         </div>
@@ -309,10 +312,25 @@ const TakeQuiz = () => {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col items-center px-4 py-8 relative w-full max-w-xl">
-      {/* Timer at top right corner after quiz starts */}
+    <div className="min-h-screen bg-black text-white flex items-center justify-center px-4 py-8 relative">
+      {/* Timer shown only after quiz started */}
       {step >= 1 && !result && (
-        <div className="absolute top-4 right-4 text-lg font-mono bg-gray-900 px-3 py-1 rounded">
+        <div
+          style={{
+            position: 'absolute',
+            top: '1rem',
+            right: '1rem',
+            backgroundColor: '#1f2937', // gray-800 similar
+            padding: '0.25rem 0.5rem',
+            borderRadius: '0.375rem',
+            fontWeight: '600',
+            fontFamily: 'monospace',
+            fontSize: '1rem',
+            userSelect: 'none',
+            color: 'white',
+            zIndex: 50,
+          }}
+        >
           Time Left: {formatTime(timeLeft)}
         </div>
       )}
@@ -342,10 +360,12 @@ const TakeQuiz = () => {
             className="w-full p-2 bg-gray-800 rounded"
           />
           {error && <p className="text-red-400">{error}</p>}
-          <AnimatedButton onClick={startQuiz} className="w-full mt-4">Start Quiz</AnimatedButton>
+          <AnimatedButton onClick={startQuiz} className="w-full mt-4">
+            Start Quiz
+          </AnimatedButton>
         </div>
       ) : (
-        <div className="w-full space-y-6">
+        <div className="w-full max-w-xl space-y-6">
           {Array.isArray(questions) && questions.length > 0 ? (
             <QuestionCard
               question={questions[step - 1]}
@@ -356,9 +376,7 @@ const TakeQuiz = () => {
             <p className="text-center text-gray-400">No questions to display.</p>
           )}
           <div className="flex justify-between">
-            {step > 1 && (
-              <AnimatedButton onClick={() => setStep(step - 1)}>Previous</AnimatedButton>
-            )}
+            {step > 1 && <AnimatedButton onClick={() => setStep(step - 1)}>Previous</AnimatedButton>}
             {Array.isArray(questions) && step < questions.length ? (
               <AnimatedButton onClick={() => setStep(step + 1)}>Next</AnimatedButton>
             ) : (
@@ -372,3 +390,4 @@ const TakeQuiz = () => {
 };
 
 export default TakeQuiz;
+

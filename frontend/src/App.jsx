@@ -33,7 +33,7 @@ const Layout = ({ children }) => {
   const location = useLocation();
 
   // Hide Navbar only on landing page
-  const hideNavbar = location.pathname === '/landing';
+  const hideNavbar = location.pathname === '/landing' || location.pathname === '/take-quiz/:quizId' ;
 
   return (
     <>
@@ -48,13 +48,10 @@ function App() {
     <BrowserRouter>
       <Layout>
         <Routes>
-          {/* Redirect root to landing page */}
           <Route path="/" element={<Navigate to="/landing" />} />
 
-          {/* Landing page */}
           <Route path="/landing" element={<QuizzlerLanding />} />
 
-          {/* Auth page (only for unauthenticated users) */}
           <Route
             path="/auth"
             element={
