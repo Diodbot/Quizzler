@@ -85,12 +85,12 @@ const login = async (req, res, next) => {
       });
     }
 
-    if (!existingUser.isVerified) {
-      return res.status(400).json({
-        success: false,
-        message: "Email is not verified. Verify Email first",
-      });
-    }
+    // if (!existingUser.isVerified) {
+    //   return res.status(400).json({
+    //     success: false,
+    //     message: "Email is not verified. Verify Email first",
+    //   });
+    // }
 
     const isPasswordCorrect = await bcrypt.compare(password, existingUser.password);
     if (!isPasswordCorrect) {
