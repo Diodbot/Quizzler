@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://localhost:4000/api/v1',
+  baseURL: 'https://quizzler-f2k8.onrender.com',
   withCredentials: true,  // always send cookies
   headers: {
     'Content-Type': 'application/json',
