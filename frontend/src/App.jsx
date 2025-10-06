@@ -89,6 +89,7 @@ function App() {
 
           {/* Take quiz page */}
           <Route path="/take-quiz/:quizId" element={<TakeQuiz />} />
+          
         </Routes>
       </Layout>
     </BrowserRouter>
