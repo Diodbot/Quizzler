@@ -5,7 +5,7 @@ import  jwt  from "jsonwebtoken";
 import crypto from "crypto";
 
 import  dotenv  from "dotenv";
-import sendEmail from "../utils/nodemailer.js";
+// import sendEmail from "../utils/nodemailer.js";
 dotenv.config()
 
 const JWT_SECRET=process.env.JWT_SECRET
@@ -37,11 +37,11 @@ const hashedpassword =await bcrypt.hash(password, salt);
 
      const verifyUrl = `http://localhost:5500/api/v1/auth/verify-email/${rawToken}`; 
 
-    await sendEmail({
-      to: email,
-      subject: "Verify your email",
-      html: `<p>Hi ${username}, please verify your email by clicking <a href="${verifyUrl}">here</a>.</p>`,
-    });
+    // await sendEmail({
+    //   to: email,
+    //   subject: "Verify your email",
+    //   html: `<p>Hi ${username}, please verify your email by clicking <a href="${verifyUrl}">here</a>.</p>`,
+    // });
 
 
    const token= jwt.sign({userId:data._id,
