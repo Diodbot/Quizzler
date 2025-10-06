@@ -8,19 +8,39 @@ export const QuizProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const fetchQuizzes = async () => {
+//   const fetchQuizzes = async () => {
+//   setLoading(true);
+//   try {
+//     const res = await api.get('/quiz/my-quizzes');
+//     console.log('Quizzes fetched:', res.data);
+//     setQuizzes(res.data.quizzesDetails || []); // <-- fix here
+//     setError(null);
+//   } catch (err) {
+//     setError(err.response?.data?.message || err.message || 'Failed to fetch quizzes');
+//   } finally {
+//     setLoading(false);
+//   }
+// };
+const fetchQuizzes = async () => {
   setLoading(true);
   try {
     const res = await api.get('/quiz/my-quizzes');
     console.log('Quizzes fetched:', res.data);
-    setQuizzes(res.data.quizzesDetails || []); // <-- fix here
+    setQuizzes(res.data.quizzesDetails || []); // keep your existing key here
     setError(null);
   } catch (err) {
-    setError(err.response?.data?.message || err.message || 'Failed to fetch quizzes');
+    // If 404, treat as no quizzes (empty array, no error)
+    if (err.response && err.response.status === 404) {
+      setQuizzes([]);
+      setError(null);
+    } else {
+      setError(err.response?.data?.message || err.message || 'Failed to fetch quizzes');
+    }
   } finally {
     setLoading(false);
   }
 };
+
 
 
   const createQuiz = async (quizData) => {
