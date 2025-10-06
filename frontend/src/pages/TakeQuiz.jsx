@@ -195,8 +195,8 @@ const TakeQuiz = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  // Timer state in seconds (10 minutes = 600 seconds)
-  const [timeLeft, setTimeLeft] = useState(600);
+  // Timer state in seconds (30 minutes = 1800 seconds)
+  const [timeLeft, setTimeLeft] = useState(3*600);
 
   // Format seconds as mm:ss
   const formatTime = (seconds) => {
