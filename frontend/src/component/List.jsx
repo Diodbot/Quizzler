@@ -11,7 +11,7 @@ const List = () => {
   }, []);
 
   const handleShare = (quizId) => {
-    const frontendUrl = `http://localhost:5173/take-quiz/${quizId}`;
+    const frontendUrl = `https://quizzlerfrontend.onrender.com/take-quiz/${quizId}`;
     navigator.clipboard.writeText(frontendUrl)
       .then(() => alert('Quiz link copied to clipboard!'))
       .catch(() => alert('Failed to copy link'));
