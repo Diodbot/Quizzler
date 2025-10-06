@@ -20,7 +20,7 @@ const List = () => {
   if (loading) return <p className="text-white">Loading...</p>;
 
   if (error) return <p className="text-red-500">Error: {error}</p>;
-if (quizzes.length === 0) {
+if (quizzes.length === 0 || !quizzes) {
   return <p className="text-white">You have no quizzes yet. Create one!</p>;
 }
 
