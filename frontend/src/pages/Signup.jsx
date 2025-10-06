@@ -11,7 +11,7 @@ const Signup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     await signup(email, password);
-    navigate('/');
+    navigate('/dashboard');
   };
 
   return (
