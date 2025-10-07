@@ -4,7 +4,7 @@ import './index.css'
 import App from './App.jsx'
 import { QuizProvider } from './context/QuizContext.jsx';
 import { AuthProvider } from './context/AuthContext'; 
-console.log("App mounting...");
+// console.log("App mounting...");
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <AuthProvider>
