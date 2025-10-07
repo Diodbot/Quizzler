@@ -143,8 +143,9 @@
 //   );
 // };
 
-// export default AuthPage;
-import { useState, useEffect } from 'react';
+// export default AuthPage;import { useState, useEffect } from 'react';
+// /
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import AuthCard from '../component/AuthCard';
@@ -154,7 +155,6 @@ const AuthPage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
-  // Initialize mode based on URL param or default to login
   const initialMode = searchParams.get('mode') || 'login';
   const [isLogin, setIsLogin] = useState(initialMode === 'login');
 
@@ -165,6 +165,7 @@ const AuthPage = () => {
   const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
+    console.log("AuthPage useEffect:", { loading, isAuthenticated });
     if (!loading && isAuthenticated) {
       navigate('/dashboard');
     }
@@ -179,31 +180,31 @@ const AuthPage = () => {
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  console.log("Submitting form, isLogin:", isLogin, { username, email, password });
-  setErrorMessage('');
-  try {
-    if (isLogin) {
-      console.log("Calling login");
-      await login(email, password);
-      console.log("Login succeeded");
-    } else {
-      console.log("Calling signup");
-      await signup(username, email, password);
-      console.log("Signup succeeded");
-      setIsLogin(true);
-      setErrorMessage('Account created! Please verify your email and then log in.');
-      setUsername('');
-      setEmail('');
-      setPassword('');
+    e.preventDefault();
+    console.log("handleSubmit:", { isLogin, username, email, password });
+    setErrorMessage('');
+    try {
+      if (isLogin) {
+        console.log("Calling login...");
+        await login(email, password);
+        console.log("Login succeeded");
+      } else {
+        console.log("Calling signup...");
+        const response = await signup(username, email, password);
+        console.log("Signup succeeded", response);
+        setIsLogin(true);
+        setErrorMessage('Account created! Please verify your email and then log in.');
+        setUsername('');
+        setEmail('');
+        setPassword('');
+      }
+    } catch (err) {
+      console.error("Error in handleSubmit:", err);
+      // If err is a string or Error
+      const msg = err.response?.data?.message || err.message || 'Something went wrong';
+      setErrorMessage(msg);
     }
-  } catch (err) {
-    console.error("Error in handleSubmit:", err);
-    const msg = err.response?.data?.message || err.message || 'Something went wrong';
-    setErrorMessage(msg);
-  }
-};
-
+  };
 
   return (
     <div className="min-h-screen bg-black flex items-center justify-center px-4">

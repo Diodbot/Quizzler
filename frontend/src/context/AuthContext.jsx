@@ -92,6 +92,86 @@
 
 // export const useAuth = () => useContext(AuthContext);
 
+// import { createContext, useContext, useState, useEffect } from 'react';
+// import api from '../api';
+
+// const AuthContext = createContext();
+
+// export const AuthProvider = ({ children }) => {
+//   const [isAuthenticated, setIsAuthenticated] = useState(false);
+//   const [loading, setLoading] = useState(true);
+
+//   const checkAuth = async () => {
+//     setLoading(true);
+//     try {
+//       await api.get('/quiz/my-quizzes'); // protected route to verify auth
+//       setIsAuthenticated(true);
+//     } catch (error) {
+//       setIsAuthenticated(false);
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   useEffect(() => {
+//     checkAuth();
+//   }, []);
+
+//   const login = async (email, password) => {
+//     setLoading(true);
+//     try {
+//       await api.post('/auth/login', { email, password });
+//       await checkAuth();
+//     } catch (error) {
+//       setIsAuthenticated(false);
+//       const message = error.response?.data?.message || error.message || 'Login failed';
+//       throw new Error(message);
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   const signup = async (username, email, password) => {
+//     setLoading(true);
+//     try {
+//       await api.post('/auth/signup', { username, email, password });
+//     } catch (error) {
+//       const message = error.response?.data?.message || error.message || 'Signup failed';
+//       throw new Error(message);
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   const logout = async () => {
+//     setLoading(true);
+//     try {
+//       await api.post('/auth/logout');
+//       setIsAuthenticated(false);
+//     } catch {
+//       // ignore errors
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   return (
+//     <AuthContext.Provider
+//       value={{
+//         isAuthenticated,
+//         loading,
+//         login,
+//         signup,
+//         logout,
+//       }}
+//     >
+//       {children}
+//     </AuthContext.Provider>
+//   );
+// };
+
+// export const useAuth = () => useContext(AuthContext);
+
 import { createContext, useContext, useState, useEffect } from 'react';
 import api from '../api';
 
@@ -104,7 +184,7 @@ export const AuthProvider = ({ children }) => {
   const checkAuth = async () => {
     setLoading(true);
     try {
-      await api.get('/quiz/my-quizzes'); // protected route to verify auth
+      await api.get('/quiz/my-quizzes');  // a protected endpoint
       setIsAuthenticated(true);
     } catch (error) {
       setIsAuthenticated(false);
@@ -171,3 +251,4 @@ export const AuthProvider = ({ children }) => {
 };
 
 export const useAuth = () => useContext(AuthContext);
+
