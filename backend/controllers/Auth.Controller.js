@@ -5,7 +5,7 @@ import  jwt  from "jsonwebtoken";
 import crypto from "crypto";
 
 import  dotenv  from "dotenv";
-import sendEmail from "./utils/nodemailer.js";
+// import sendEmail from "../utils/nodemailer.js";
 dotenv.config()
 
 const JWT_SECRET=process.env.JWT_SECRET
@@ -35,24 +35,24 @@ const hashedpassword =await bcrypt.hash(password, salt);
 
 
 
-    //  const verifyUrl = `http://localhost:5500/api/v1/auth/verify-email/${rawToken}`; 
-    const verifyUrl = `https://quizzlerfrontend.onrender.com/verify/${rawToken}`;
-     console.log("sending")
+     const verifyUrl = `http://localhost:5500/api/v1/auth/verify-email/${rawToken}`; 
 
-    await sendEmail({
-      to: email,
-      subject: "Verify your email",
-      html: `<p>Hi ${username}, please verify your email by clicking <a href="${verifyUrl}">here</a>.</p>`,
-    });
+    // await sendEmail({
+    //   to: email,
+    //   subject: "Verify your email",
+    //   html: `<p>Hi ${username}, please verify your email by clicking <a href="${verifyUrl}">here</a>.</p>`,
+    // });
 
 
-  //  const token= jwts
-//   res.cookie('token', token, {
-//   httpOnly: true,
-//   secure: process.env.NODE_ENV === 'production', // true only on prod (HTTPS)
-//   sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-//   maxAge: 24 * 60 * 60 * 1000,
-// });
+   const token= jwt.sign({userId:data._id,
+    role:'Creator'
+   },JWT_SECRET,{expiresIn:"1d"})
+  res.cookie('token', token, {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === 'production', // true only on prod (HTTPS)
+  sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+  maxAge: 24 * 60 * 60 * 1000,
+});
 
      res.status(201).json({
             success:true,
@@ -148,6 +148,7 @@ const logout = async (req, res) => {
 
 
 
+
 const verifyEmail = async (req, res) => {
   try {
     const { token } = req.params;
@@ -214,9 +215,7 @@ const reverifyEmail=async(req,res)=>{
         existingUser.verificationToken = hashedToken;
     existingUser.verificationTokenExpires = Date.now() + 10 * 60 * 1000;
    const user= await existingUser.save();
-        const verifyUrl = `https://quizzlerfrontend.onrender.com/verify/${rawToken}`;
-
-        
+        const verifyUrl = `http://localhost:5500/api/v1/auth/verify-email/${rawToken}`;
 
         await sendEmail({
             to: email,
@@ -263,10 +262,8 @@ const sendResetPassword = async (req, res) => {
     await user.save();
 
     // const resetPassUrl = `http://localhost:5500/api/v1/auth/resetpassword/${rawToken}`;
-    // const resetPassUrl = `http://localhost:5173/reset-password/${rawToken}`; 
-    const resetPassUrl = `https://quizzlerfrontend.onrender.com/reset-password/${rawToken}`;
-
-
+    const resetPassUrl = `http://localhost:5173/reset-password/${rawToken}`; 
+// ^ use your frontend port
 
 
     await sendEmail({
