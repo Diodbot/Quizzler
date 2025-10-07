@@ -17,7 +17,7 @@ export default function QuizzlerLanding() {
   const navigate=useNavigate()
 
   const handleAuthClick = (mode = 'login') => {
-  navigate(`/auth?mode=${mode}`);
+  navigate(`/auth`);
 };
 
   return (
