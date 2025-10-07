@@ -23,18 +23,34 @@ export const AuthProvider = ({ children }) => {
     checkAuth();
   }, []);
 
+  // const login = async (email, password) => {
+  //   setLoading(true);
+  //   try {
+  //     await api.post('/auth/login', { email, password });
+  //     await checkAuth(); // refresh auth state after login
+  //   } catch (error) {
+  //     setToken(null);
+  //     throw error;
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
   const login = async (email, password) => {
-    setLoading(true);
-    try {
-      await api.post('/auth/login', { email, password });
-      await checkAuth(); // refresh auth state after login
-    } catch (error) {
-      setToken(null);
-      throw error;
-    } finally {
-      setLoading(false);
+  setLoading(true);
+  try {
+    const { data } = await api.post('/auth/login', { email, password });
+    setToken(data.token);
+  } catch (error) {
+    setToken(null);
+    if (error.response?.data?.message) {
+      throw new Error(error.response.data.message);
     }
-  };
+    throw error;
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   const signup = async (username, email, password) => {
     setLoading(true);

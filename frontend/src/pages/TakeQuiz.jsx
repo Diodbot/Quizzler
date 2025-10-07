@@ -179,7 +179,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import api from '../api'; // your axios instance
+import api from '../api'; 
 import QuestionCard from '../component/QuestionCard';
 import AnimatedButton from '../component/AnimatedButton';
 
@@ -205,10 +205,10 @@ const TakeQuiz = () => {
     return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
   };
 
-  // Timer effect: start countdown after quiz starts (step >= 1)
+  
   useEffect(() => {
-    if (step < 1) return; // no timer before quiz start
-    if (result) return; // stop timer when result shown
+    if (step < 1) return;
+    if (result) return; 
     if (timeLeft <= 0) {
       // Auto-submit quiz when time runs out
       handleSubmit();
@@ -244,7 +244,7 @@ const TakeQuiz = () => {
       const quizObj = res.data.quiz;
       setQuestions(quizObj.questions || []);
       setStep(1);
-      setTimeLeft(600); // reset timer on quiz start
+      setTimeLeft(1800); 
     } catch (err) {
       setError(err.response?.data?.message || err.message || 'Failed to start quiz');
     } finally {
@@ -313,14 +313,14 @@ const TakeQuiz = () => {
 
   return (
     <div className="min-h-screen bg-black text-white flex items-center justify-center px-4 py-8 relative">
-      {/* Timer shown only after quiz started */}
+     
       {step >= 1 && !result && (
         <div
           style={{
             position: 'absolute',
             top: '1rem',
             right: '1rem',
-            backgroundColor: '#1f2937', // gray-800 similar
+            backgroundColor: '#1f2937', 
             padding: '0.25rem 0.5rem',
             borderRadius: '0.375rem',
             fontWeight: '600',

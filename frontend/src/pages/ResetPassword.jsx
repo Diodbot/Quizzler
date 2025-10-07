@@ -1,61 +1,96 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from 'react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 
 const ResetPassword = () => {
-  const [message, setMessage] = useState("");
+  const { token } = useParams();
+  const navigate = useNavigate();
+
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [showPwd, setShowPwd] = useState(false);
+  const [showConfirmPwd, setShowConfirmPwd] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const formData = new FormData(e.target);
-    const email = formData.get("email");
-
-    try {
-      const response = await fetch("http://localhost:5500/api/v1/auth/sendResetPassword", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
-
-      if (response.ok) {
-        setMessage("Reset link sent to your email.");
-      } else {
-        setMessage("Failed to send reset link.");
-      }
-    } catch {
-      setMessage("Error sending reset link.");
+    setError('');
+    setSuccess('');
+    if (password !== confirmPassword) {
+      setError("Passwords don't match");
+      return;
     }
+    setLoading(true);
+    try {
+      const res = await fetch(`https://quizzler-f2k8.onrender.com/api/v1/auth/reset-password/${token}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setSuccess(data.message || 'Password reset successfully. Redirecting to login...');
+        setTimeout(() => navigate('/login'), 2000);
+      } else {
+        setError(data.message || 'Failed to reset password.');
+      }
+    } catch (err) {
+      setError('Error during reset.');
+    }
+    setLoading(false);
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="flex items-center justify-center w-[400px] h-auto bg-indigo-900 rounded-2xl flex-col p-6 gap-6 shadow-lg"
-    >
-      <div className="flex flex-col gap-5 w-full items-center">
-        <input
-          name="email"
-          type="email"
-          placeholder="Enter your registered email..."
-          required
-          className="w-[350px] h-[50px] text-xl font-semibold text-blue-950 bg-amber-200 rounded-xl text-center placeholder-gray-600 focus:outline-none focus:ring-4 focus:ring-cyan-400 transition"
-        />
-      </div>
-
-      <button
-        type="submit"
-        className="w-[350px] h-[50px] bg-cyan-400 text-xl font-bold text-blue-950 rounded-xl mt-4 hover:bg-cyan-500 active:bg-gray-700 active:text-white transition"
-      >
-        Send Reset Link
-      </button>
-
-      {message && <p className="text-white font-bold mt-3">{message}</p>}
-
-      <div className="text-white text-lg mt-3 font-bold text-center">
-        
-        <Link to="/login" className="underline text-cyan-300 hover:text-white transition"> Back to Login</Link>
-      </div>
-    </form>
+    <div className="min-h-screen flex items-center justify-center bg-indigo-900 p-6">
+      <form onSubmit={handleSubmit} className="bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-md">
+        <h2 className="text-white text-2xl mb-4">Set New Password</h2>
+        <div className="mb-4 relative">
+          <input
+            type={showPwd ? 'text' : 'password'}
+            required
+            placeholder="New Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full p-2 rounded bg-gray-700 text-white"
+          />
+          <span
+            onClick={() => setShowPwd(!showPwd)}
+            className="absolute right-3 top-3 cursor-pointer text-white"
+          >
+            {showPwd ? '🙈' : '👁️'}
+          </span>
+        </div>
+        <div className="mb-4 relative">
+          <input
+            type={showConfirmPwd ? 'text' : 'password'}
+            required
+            placeholder="Confirm New Password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            className="w-full p-2 rounded bg-gray-700 text-white"
+          />
+          <span
+            onClick={() => setShowConfirmPwd(!showConfirmPwd)}
+            className="absolute right-3 top-3 cursor-pointer text-white"
+          >
+            {showConfirmPwd ? '🙈' : '👁️'}
+          </span>
+        </div>
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full p-2 bg-cyan-500 text-black rounded hover:bg-cyan-600 disabled:opacity-50"
+        >
+          {loading ? 'Resetting...' : 'Reset Password'}
+        </button>
+        {error && <p className="mt-4 text-red-400">{error}</p>}
+        {success && <p className="mt-4 text-green-400">{success}</p>}
+        <div className="mt-4 text-center">
+          <Link to="/login" className="text-cyan-300 underline hover:text-white">Back to Login</Link>
+        </div>
+      </form>
+    </div>
   );
 };
 

@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useQuiz } from '../context/QuizContext';
 import { Link, useNavigate } from 'react-router-dom';
+import QuizCreation from './QuizCreation';
 
 const List = () => {
   const { quizzes, deleteQuiz, fetchQuizzes, loading, error } = useQuiz();
@@ -24,12 +25,6 @@ if (!quizzes || quizzes.length === 0) {
     return (
       <div className="text-white flex flex-col items-center justify-center min-h-screen">
         <p className="mb-4 text-xl">You have no quizzes yet. Create one!</p>
-        <button
-          onClick={() => navigate('/create')} // adjust the route to your quiz creation page
-          className="px-6 py-2 bg-blue-600 rounded hover:bg-blue-700 transition"
-        >
-          Create New Quiz
-        </button>
       </div>
     );
   }

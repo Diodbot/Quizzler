@@ -1,78 +1,52 @@
-import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate, Link } from "react-router-dom";
 
 const VerifyEmail = () => {
-  const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
-  const [loading, setLoading] = useState(false);
-
-  // Helper to parse query params
-  const useQuery = () => {
-    return new URLSearchParams(useLocation().search);
-  };
-
-  const query = useQuery();
+  const { token } = useParams();
+  const navigate = useNavigate();
+  const [message, setMessage] = useState("Verifying your email...");
+  const [error, setError] = useState(false);
 
   useEffect(() => {
-    const emailFromQuery = query.get("email");
-    if (emailFromQuery) {
-      setEmail(emailFromQuery);
-    }
-  }, [query]);
+    const verify = async () => {
+      try {
+        const res = await fetch(`https://quizzlerbackend.onrender.com/api/v1/auth/verify-email/${token}`, {
+          method: "GET",
+        });
 
-  const handleResend = async () => {
-    setLoading(true);
-    setMessage("");
-
-    try {
-      const response = await fetch("http://localhost:5500/api/v1/auth/reverifyEmail", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
-
-      const result = await response.json();
-
-      if (response.ok) {
-        setMessage("Verification email resent. Please check your inbox.");
-      } else {
-        setMessage(result.message || "Failed to resend verification email.");
+        if (res.ok) {
+          setMessage("✅ Email verified successfully! Redirecting to login...");
+          setError(false);
+          setTimeout(() => {
+            navigate("/login");
+          }, 3000);
+        } else {
+          const data = await res.json();
+          setMessage(data.message || "❌ Verification failed or token expired.");
+          setError(true);
+        }
+      } catch {
+        setMessage("❌ Network error during verification.");
+        setError(true);
       }
-    } catch (error) {
-      setMessage("An error occurred. Please try again.");
-    }
+    };
 
-    setLoading(false);
-  };
+    verify();
+  }, [token, navigate]);
 
   return (
-    <div className="flex flex-col items-center justify-center w-[400px] h-auto bg-indigo-900 rounded-2xl p-6 gap-6 shadow-lg text-white text-center">
-      <h2 className="text-2xl font-bold">Please Verify Your Email</h2>
-      <p>
-        We sent you an email with a verification link. Please check your inbox and
-        click on the link to activate your account.
-      </p>
-
-      {email && (
-        <>
-          <p className="mt-4">Didn't receive the email?</p>
-          <button
-            onClick={handleResend}
-            disabled={loading}
-            className="mt-2 px-6 py-2 bg-cyan-400 rounded-xl font-semibold text-blue-950 hover:bg-cyan-500 transition"
-          >
-            {loading ? "Sending..." : "Resend Verification Email"}
-          </button>
-          {message && <p className="mt-2">{message}</p>}
-        </>
-      )}
-
-      <a
-        href="/login"
-        className="mt-6 px-6 py-2 bg-cyan-400 rounded-xl font-semibold text-blue-950 hover:bg-cyan-500 transition"
-      >
-        Back to Login
-      </a>
+    <div className="min-h-screen flex items-center justify-center bg-indigo-900 p-6">
+      <div className={`p-8 rounded-2xl shadow-lg max-w-md text-center ${error ? "bg-red-700 text-white" : "bg-green-700 text-white"}`}>
+        <h1 className="text-2xl font-bold mb-4">{error ? "Verification Error" : "Verification Successful"}</h1>
+        <p className="mb-6">{message}</p>
+        {error && (
+          <>
+            <Link to="/login" className="underline text-cyan-300 hover:text-white">
+              Back to Login
+            </Link>
+          </>
+        )}
+      </div>
     </div>
   );
 };
