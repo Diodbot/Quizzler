@@ -5,8 +5,7 @@ import  jwt  from "jsonwebtoken";
 import crypto from "crypto";
 
 import  dotenv  from "dotenv";
-// import sendEmail from "../utils/nodemailer.js";
-import sendEmail from "./utils/nodemailer.js";
+import sendEmail from "../utils/nodemailer.js";
 dotenv.config()
 
 const JWT_SECRET=process.env.JWT_SECRET
