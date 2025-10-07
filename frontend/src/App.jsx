@@ -4,6 +4,7 @@ import EditQuiz from './pages/EditQuiz';
 import AuthPage from './pages/AuthPage';
 import Navbar from './component/Navbar';
 import { useAuth } from './context/AuthContext';
+// import useAuth
 import TakeQuiz from './pages/TakeQuiz';
 import QuizTestGivers from './pages/QuizTestGivers';
 import QuizzlerLanding from './pages/LandingPage';
