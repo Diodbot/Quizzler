@@ -9,36 +9,94 @@ import sendEmail from "../utils/nodemailer.js";
 dotenv.config()
 
 const JWT_SECRET=process.env.JWT_SECRET
+// const SignUp = async (req, res, next) => {
+//   try {
+//     const { username, email, password } = req.body;
+
+//     const existingUser = await User.findOne({ email });
+//     if (existingUser) {
+//       return res.status(400).json({ success: false, message: "User already exists. Please login." });
+//     }
+
+//     const hashedPassword = await bcrypt.hash(password, 10);
+
+//     const rawToken = crypto.randomBytes(32).toString("hex");
+//     const hashedToken = crypto.createHash("sha256").update(rawToken).digest("hex");
+
+//     const newUser = await User.create({
+//       username,
+//       email,
+//       password: hashedPassword,
+//       verificationToken: hashedToken,
+//       verificationTokenExpires: Date.now() + 10 * 60 * 1000,
+//       isVerified: false,
+//     });
+
+//     const verifyUrl = `https://quizzlerfrontend.onrender.com/verify/${rawToken}`;
+//     await sendEmail({
+//       to: email,
+//       subject: "Verify your email",
+//       html: `<p>Hi ${username}, please verify your email by clicking <a href="${verifyUrl}">here</a>.</p>`,
+//     });
+
+//     return res.status(201).json({
+//       success: true,
+//       message: "User created. Verification email sent. Please verify before logging in.",
+//     });
+//   } catch (error) {
+//     console.error("SignUp error:", error);
+//     return res.status(500).json({ success: false, message: "Signup failed", error: error.message });
+//   }
+// };
+
+
+
 const SignUp = async (req, res, next) => {
   try {
     const { username, email, password } = req.body;
 
+    // Check if user exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ success: false, message: "User already exists. Please login." });
     }
 
+    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    // Create email verification token
     const rawToken = crypto.randomBytes(32).toString("hex");
     const hashedToken = crypto.createHash("sha256").update(rawToken).digest("hex");
 
+    // Create new user
     const newUser = await User.create({
       username,
       email,
       password: hashedPassword,
       verificationToken: hashedToken,
-      verificationTokenExpires: Date.now() + 10 * 60 * 1000,
+      verificationTokenExpires: Date.now() + 10 * 60 * 1000, // 10 minutes
       isVerified: false,
     });
 
+    // Verification URL
     const verifyUrl = `https://quizzlerfrontend.onrender.com/verify/${rawToken}`;
-    await sendEmail({
-      to: email,
-      subject: "Verify your email",
-      html: `<p>Hi ${username}, please verify your email by clicking <a href="${verifyUrl}">here</a>.</p>`,
-    });
 
+    // Send verification email safely
+    try {
+      await Promise.race([
+        sendEmail({
+          to: email,
+          subject: "Verify your email",
+          html: `<p>Hi ${username}, please verify your email by clicking <a href="${verifyUrl}">here</a>.</p>`,
+        }),
+        new Promise((_, reject) => setTimeout(() => reject(new Error("Email send timeout")), 10000)), // 10 sec timeout
+      ]);
+    } catch (emailError) {
+      console.error("Failed to send verification email:", emailError);
+      // Optionally, you could remove the user or flag it to resend later, but here we just log
+    }
+
+    // Respond regardless of email send result
     return res.status(201).json({
       success: true,
       message: "User created. Verification email sent. Please verify before logging in.",
@@ -48,7 +106,6 @@ const SignUp = async (req, res, next) => {
     return res.status(500).json({ success: false, message: "Signup failed", error: error.message });
   }
 };
-
 const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
