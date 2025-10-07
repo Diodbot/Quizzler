@@ -179,27 +179,31 @@ const AuthPage = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setErrorMessage('');
-    try {
-      if (isLogin) {
-        // Login flow
-        await login(email, password);
-      } else {
-        // Signup flow
-        await signup(username, email, password);
-        setIsLogin(true); // Switch to login after signup
-        setErrorMessage('Account created! Please verify your email and then log in.');
-        setUsername('');
-        setEmail('');
-        setPassword('');
-      }
-    } catch (err) {
-      // Extract error message safely
-      const msg = err.response?.data?.message || err.message || 'Something went wrong';
-      setErrorMessage(msg);
+  e.preventDefault();
+  console.log("Submitting form, isLogin:", isLogin, { username, email, password });
+  setErrorMessage('');
+  try {
+    if (isLogin) {
+      console.log("Calling login");
+      await login(email, password);
+      console.log("Login succeeded");
+    } else {
+      console.log("Calling signup");
+      await signup(username, email, password);
+      console.log("Signup succeeded");
+      setIsLogin(true);
+      setErrorMessage('Account created! Please verify your email and then log in.');
+      setUsername('');
+      setEmail('');
+      setPassword('');
     }
-  };
+  } catch (err) {
+    console.error("Error in handleSubmit:", err);
+    const msg = err.response?.data?.message || err.message || 'Something went wrong';
+    setErrorMessage(msg);
+  }
+};
+
 
   return (
     <div className="min-h-screen bg-black flex items-center justify-center px-4">
