@@ -11,6 +11,7 @@ const AuthPage = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false); // 👈 New state
 
   useEffect(() => {
     if (!loading && isAuthenticated) {
@@ -78,14 +79,27 @@ const AuthPage = () => {
             onChange={(e) => setEmail(e.target.value)}
             required
           />
-          <input
-            className="w-full p-2 bg-gray-800 rounded text-white placeholder-gray-500"
-            placeholder="Password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
+
+          {/* Password Input with Toggle */}
+          <div className="relative">
+            <input
+              className="w-full p-2 pr-10 bg-gray-800 rounded text-white placeholder-gray-500"
+              placeholder="Password"
+              type={showPassword ? 'text' : 'password'}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute inset-y-0 right-0 px-3 text-gray-400 hover:text-white focus:outline-none"
+              tabIndex={-1}
+            >
+              {showPassword ? '🙈' : '👁️'}
+            </button>
+          </div>
+
           <button
             className="w-full bg-blue-600 hover:bg-blue-700 transition-colors duration-300 px-4 py-2 rounded font-semibold"
             type="submit"
