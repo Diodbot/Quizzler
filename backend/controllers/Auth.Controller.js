@@ -49,12 +49,12 @@ const hashedpassword =await bcrypt.hash(password, salt);
    const token= jwt.sign({userId:data._id,
     role:'Creator'
    },JWT_SECRET,{expiresIn:"1d"})
-  res.cookie('token', token, {
-  httpOnly: true,
-  secure: process.env.NODE_ENV === 'production', // true only on prod (HTTPS)
-  sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-  maxAge: 24 * 60 * 60 * 1000,
-});
+//   res.cookie('token', token, {
+//   httpOnly: true,
+//   secure: process.env.NODE_ENV === 'production', // true only on prod (HTTPS)
+//   sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+//   maxAge: 24 * 60 * 60 * 1000,
+// });
 
      res.status(201).json({
             success:true,

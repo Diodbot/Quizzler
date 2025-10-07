@@ -53,17 +53,21 @@ export const AuthProvider = ({ children }) => {
 
 
   const signup = async (username, email, password) => {
-    setLoading(true);
-    try {
-      await api.post('/auth/signup', { username, email, password });
-      await checkAuth(); 
-    } catch (error) {
-      setToken(null);
-      throw error;
-    } finally {
-      setLoading(false);
-    }
-  };
+  setLoading(true);
+  try {
+    // Send signup request
+    await api.post('/auth/signup', { username, email, password });
+
+    // ✅ Don't auto-login or checkAuth here
+    // ✅ Let the user manually log in after email verification
+  } catch (error) {
+    setToken(null);
+    throw error;
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   const logout = async () => {
     setLoading(true);
