@@ -9,6 +9,7 @@ testGiverRouter.post("/submit/:testGiverId", submitTestGiverAnswers);
 testGiverRouter.get("/:testGiverId", getTestGiverById);
 
 testGiverRouter.get("/by-quiz/:quizId", getTestGiversByQuiz);
+
 testGiverRouter.get("/:testGiverId/quiz", getQuizForTestGiver);
 
 export default testGiverRouter;

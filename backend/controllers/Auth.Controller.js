@@ -151,15 +151,17 @@ const logout = async (req, res) => {
 
 
 
-const verifyEmail=async(req,res)=>{
+const verifyEmail = async (req, res) => {
   try {
     const { token } = req.params;
 
+    // Hash token from params to match DB
     const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
 
+    // Find user with this token & check if token expired
     const user = await User.findOne({
       verificationToken: hashedToken,
-      verificationTokenExpires: { $gt: Date.now() }, 
+      verificationTokenExpires: { $gt: Date.now() }, // token not expired
     });
 
     if (!user) {
@@ -167,14 +169,14 @@ const verifyEmail=async(req,res)=>{
     }
      
 
-   
+    // Mark user as verified
     user.isVerified = true;
     user.verificationToken = undefined;
     user.verificationTokenExpires = undefined;
 
     await user.save();
 
-  
+    // Create JWT after verification
     const jwtToken = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: "1d" });
 
     res.status(200).json({
