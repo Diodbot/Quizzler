@@ -5,7 +5,7 @@ import  jwt  from "jsonwebtoken";
 import crypto from "crypto";
 
 import  dotenv  from "dotenv";
-// import sendEmail from "../utils/nodemailer.js";
+import sendEmail from "./utils/nodemailer.js";
 dotenv.config()
 
 const JWT_SECRET=process.env.JWT_SECRET
@@ -35,13 +35,15 @@ const hashedpassword =await bcrypt.hash(password, salt);
 
 
 
-     const verifyUrl = `http://localhost:5500/api/v1/auth/verify-email/${rawToken}`; 
+    //  const verifyUrl = `http://localhost:5500/api/v1/auth/verify-email/${rawToken}`; 
+    const verifyUrl = `https://quizzlerfrontend.onrender.com/verify/${rawToken}`;
 
-    // await sendEmail({
-    //   to: email,
-    //   subject: "Verify your email",
-    //   html: `<p>Hi ${username}, please verify your email by clicking <a href="${verifyUrl}">here</a>.</p>`,
-    // });
+
+    await sendEmail({
+      to: email,
+      subject: "Verify your email",
+      html: `<p>Hi ${username}, please verify your email by clicking <a href="${verifyUrl}">here</a>.</p>`,
+    });
 
 
    const token= jwt.sign({userId:data._id,
@@ -85,12 +87,12 @@ const login = async (req, res, next) => {
       });
     }
 
-    // if (!existingUser.isVerified) {
-    //   return res.status(400).json({
-    //     success: false,
-    //     message: "Email is not verified. Verify Email first",
-    //   });
-    // }
+    if (!existingUser.isVerified) {
+      return res.status(400).json({
+        success: false,
+        message: "Email is not verified. Verify Email first",
+      });
+    }
 
     const isPasswordCorrect = await bcrypt.compare(password, existingUser.password);
     if (!isPasswordCorrect) {
@@ -145,7 +147,6 @@ const logout = async (req, res) => {
     res.status(500).json({ message: "Server error during logout" });
   }
 };
-
 
 
 
@@ -215,7 +216,9 @@ const reverifyEmail=async(req,res)=>{
         existingUser.verificationToken = hashedToken;
     existingUser.verificationTokenExpires = Date.now() + 10 * 60 * 1000;
    const user= await existingUser.save();
-        const verifyUrl = `http://localhost:5500/api/v1/auth/verify-email/${rawToken}`;
+        const verifyUrl = `https://quizzlerfrontend.onrender.com/verify/${rawToken}`;
+
+        
 
         await sendEmail({
             to: email,
@@ -262,8 +265,10 @@ const sendResetPassword = async (req, res) => {
     await user.save();
 
     // const resetPassUrl = `http://localhost:5500/api/v1/auth/resetpassword/${rawToken}`;
-    const resetPassUrl = `http://localhost:5173/reset-password/${rawToken}`; 
-// ^ use your frontend port
+    // const resetPassUrl = `http://localhost:5173/reset-password/${rawToken}`; 
+    const resetPassUrl = `https://quizzlerfrontend.onrender.com/reset-password/${rawToken}`;
+
+
 
 
     await sendEmail({
