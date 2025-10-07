@@ -16,9 +16,14 @@ export default function QuizzlerLanding() {
   }, []);
   const navigate=useNavigate()
 
-  const handleAuthClick = () => {
-        navigate('/auth');
-  };
+const handleLoginClick = () => {
+  navigate('/auth?mode=login');
+};
+
+const handleSignupClick = () => {
+  navigate('/auth?mode=signup');
+};
+
 
   return (
     <div className="min-h-screen bg-black text-white overflow-hidden relative">
@@ -72,14 +77,14 @@ export default function QuizzlerLanding() {
         </div>
         <div className="flex items-center space-x-4">
           <button 
-            onClick={handleAuthClick}
+            onClick={handleLoginClick}
             className="px-6 py-2.5 text-white font-medium hover:text-green-500 transition-colors duration-300 relative group"
           >
             Login
             <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-green-500 group-hover:w-full transition-all duration-300"></span>
           </button>
           <button 
-            onClick={handleAuthClick}
+            onClick={handleSignupClick}
             className="px-8 py-2.5 bg-green-700 hover:bg-green-600 rounded font-semibold transform hover:scale-105 transition-all duration-300"
           >
             Sign Up
@@ -108,7 +113,7 @@ export default function QuizzlerLanding() {
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
             <button 
-              onClick={handleAuthClick}
+              onClick={handleSignupClick}
               className="group px-10 py-5 bg-green-700 hover:bg-green-600 rounded font-bold text-lg transform hover:scale-105 transition-all duration-300 flex items-center space-x-3"
             >
               <Plus className="w-5 h-5" />

@@ -1,25 +1,40 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import AuthCard from '../component/AuthCard';
 
 const AuthPage = () => {
   const { login, signup, isAuthenticated, loading } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [isLogin, setIsLogin] = useState(true);
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false); // 👈 New state
+  const [showPassword, setShowPassword] = useState(false);
 
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const mode = params.get('mode');
+    if (mode === 'signup') {
+      setIsLogin(false);
+    } else {
+      setIsLogin(true); 
+    }
+  }, [location.search]);
+
+ 
   useEffect(() => {
     if (!loading && isAuthenticated) {
       navigate('/dashboard');
     }
   }, [isAuthenticated, loading, navigate]);
 
-  const toggleMode = () => setIsLogin(!isLogin);
+  const toggleMode = () => {
+    setIsLogin((prev) => !prev);
+    setPassword('');
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -37,7 +52,9 @@ const AuthPage = () => {
     }
   };
 
-  if (loading) return <div className="text-white p-6">Checking Authentication...</div>;
+  if (loading) {
+    return <div className="text-white p-6">Checking Authentication...</div>;
+  }
 
   return (
     <div className="min-h-screen bg-black flex items-center justify-center px-4">
@@ -80,7 +97,7 @@ const AuthPage = () => {
             required
           />
 
-          {/* Password Input with Toggle */}
+          {/* Password Input with Show/Hide Toggle */}
           <div className="relative">
             <input
               className="w-full p-2 pr-10 bg-gray-800 rounded text-white placeholder-gray-500"
