@@ -6,6 +6,8 @@ import AuthCard from '../component/AuthCard';
 import axios from 'axios';
 
 const AuthPage = () => {
+  console.log("AuthPage rendering, isLogin:", isLogin, "loading:", loading, "isAuthenticated:", isAuthenticated);
+
   const { login, signup, isAuthenticated, loading } = useAuth();
   const navigate = useNavigate();
 
