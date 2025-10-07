@@ -26,3 +26,5 @@ const sendEmail = async ({ to, subject, html }) => {
     console.error('Error sending email:', error);
   }
 };
+
+export default sendEmail;
