@@ -1,13 +1,16 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import AuthCard from '../component/AuthCard';
 
 const AuthPage = () => {
   const { login, signup, isAuthenticated, loading } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  
+  const initialMode = searchParams.get('mode') || 'login';
+  const [isLogin, setIsLogin] = useState(initialMode === 'login');
 
-  const [isLogin, setIsLogin] = useState(true);
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -36,9 +39,10 @@ const AuthPage = () => {
         await login(email, password);
       } else {
         await signup(username, email, password);
+        setIsLogin(true); // switch to login after signup
+        setErrorMessage('Account created! Please log in.');
       }
     } catch (err) {
-      // Use err.response?.data?.message if available, fallback to err.message
       const msg = err.response?.data?.message || err.message || "Something went wrong";
       setErrorMessage(msg);
     }
@@ -108,7 +112,11 @@ const AuthPage = () => {
           </div>
 
           {errorMessage && (
-            <div className="bg-red-600 text-white p-2 rounded text-center font-semibold">
+            <div className={`p-2 rounded text-center font-semibold ${
+              errorMessage.toLowerCase().includes('account created')
+                ? 'bg-green-700 text-white'
+                : 'bg-red-600 text-white'
+            }`}>
               {errorMessage}
             </div>
           )}
