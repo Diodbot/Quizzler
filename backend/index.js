@@ -15,12 +15,15 @@ const allowedOrigin = process.env.ORIGIN;
 
 dbConnect();
 
+console.log('CORS Origin:', process.env.ORIGIN);
 const corsOptions = {
   origin: process.env.ORIGIN, // should exactly match frontend origin
   credentials: true, // allow cookies and credentials
 };
 
+
 app.use(cors(corsOptions));
+// app.options('*', cors(corsOptions)); 
 app.use(express.json());
 app.use(cookieParser());
 const commonUrl = '/api/v1'

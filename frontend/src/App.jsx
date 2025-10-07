@@ -4,7 +4,6 @@ import EditQuiz from './pages/EditQuiz';
 import AuthPage from './pages/AuthPage';
 import Navbar from './component/Navbar';
 import { useAuth } from './context/AuthContext';
-// import useAuth
 import TakeQuiz from './pages/TakeQuiz';
 import QuizTestGivers from './pages/QuizTestGivers';
 import QuizzlerLanding from './pages/LandingPage';
@@ -34,7 +33,11 @@ const Layout = ({ children }) => {
 
   const hideNavbar =
     location.pathname === '/landing' ||
-    location.pathname.startsWith('/take-quiz/');
+    location.pathname.startsWith('/take-quiz/') ||
+    location.pathname.startsWith('/verify/') ||
+    location.pathname === '/reverify-email' ||
+    location.pathname === '/reset-password' ||
+    location.pathname.startsWith('/reset-password/');
 
   return (
     <>
@@ -79,8 +82,9 @@ function App() {
               </PrivateRoute>
             }
           />
-            <Route path="/verify/:token" element={<VerifyEmail />} />
-            <Route path="/reverify-email" element={<ReverifyEmail />} />
+
+          <Route path="/verify/:token" element={<VerifyEmail />} />
+          <Route path="/reverify-email" element={<ReverifyEmail />} />
           <Route path="/reset-password" element={<SendResetPassword />} />
           <Route path="/reset-password/:token" element={<ResetPassword />} />
 
