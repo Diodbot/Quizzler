@@ -16,9 +16,9 @@ export default function QuizzlerLanding() {
   }, []);
   const navigate=useNavigate()
 
-  const handleAuthClick = (mode = 'login') => {
-  navigate(`/auth`);
-};
+  const handleAuthClick = () => {
+        navigate('/auth');
+  };
 
   return (
     <div className="min-h-screen bg-black text-white overflow-hidden relative">
@@ -72,15 +72,14 @@ export default function QuizzlerLanding() {
         </div>
         <div className="flex items-center space-x-4">
           <button 
-            onClick={()=>handleAuthClick('login')}
+            onClick={handleAuthClick}
             className="px-6 py-2.5 text-white font-medium hover:text-green-500 transition-colors duration-300 relative group"
           >
             Login
             <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-green-500 group-hover:w-full transition-all duration-300"></span>
           </button>
           <button 
-                        onClick={()=>handleAuthClick('sigup')}
-
+            onClick={handleAuthClick}
             className="px-8 py-2.5 bg-green-700 hover:bg-green-600 rounded font-semibold transform hover:scale-105 transition-all duration-300"
           >
             Sign Up
