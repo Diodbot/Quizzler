@@ -4,16 +4,16 @@ import api from '../api';
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [token, setToken] = useState(null); 
+  const [token, setToken] = useState(null); // means logged in state
   const [loading, setLoading] = useState(true);
 
-
+  // Check if user is logged in by calling a protected route
   const checkAuth = async () => {
     try {
-      await api.get('/quiz/my-quizzes'); 
-      setToken('logged_in'); //
+      await api.get('/quiz/my-quizzes'); // this requires auth middleware
+      setToken('logged_in'); // success means logged in
     } catch (error) {
-      setToken(null); // 
+      setToken(null); // unauthorized or error means logged out
     } finally {
       setLoading(false);
     }
@@ -23,51 +23,31 @@ export const AuthProvider = ({ children }) => {
     checkAuth();
   }, []);
 
-  // const login = async (email, password) => {
-  //   setLoading(true);
-  //   try {
-  //     await api.post('/auth/login', { email, password });
-  //     await checkAuth(); // refresh auth state after login
-  //   } catch (error) {
-  //     setToken(null);
-  //     throw error;
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
   const login = async (email, password) => {
-  setLoading(true);
-  try {
-    const { data } = await api.post('/auth/login', { email, password });
-    setToken(data.token);
-  } catch (error) {
-    setToken(null);
-    if (error.response?.data?.message) {
-      throw new Error(error.response.data.message);
+    setLoading(true);
+    try {
+      await api.post('/auth/login', { email, password });
+      await checkAuth(); // refresh auth state after login
+    } catch (error) {
+      setToken(null);
+      throw error;
+    } finally {
+      setLoading(false);
     }
-    throw error;
-  } finally {
-    setLoading(false);
-  }
-};
-
+  };
 
   const signup = async (username, email, password) => {
-  setLoading(true);
-  try {
-    // Send signup request
-    await api.post('/auth/signup', { username, email, password });
-
-    // ✅ Don't auto-login or checkAuth here
-    // ✅ Let the user manually log in after email verification
-  } catch (error) {
-    setToken(null);
-    throw error;
-  } finally {
-    setLoading(false);
-  }
-};
-
+    setLoading(true);
+    try {
+      await api.post('/auth/signup', { username, email, password });
+      await checkAuth(); // refresh auth state after signup
+    } catch (error) {
+      setToken(null);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const logout = async () => {
     setLoading(true);
@@ -75,7 +55,7 @@ export const AuthProvider = ({ children }) => {
       await api.post('/auth/logout');
       setToken(null);
     } catch (error) {
-      
+      // ignore error or handle it
     } finally {
       setLoading(false);
     }
