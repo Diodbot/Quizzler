@@ -1,73 +1,174 @@
-import { createContext, useContext, useState, useEffect } from 'react';
-import api from '../api';
+// import { createContext, useContext, useState, useEffect } from 'react';
+// import api from '../api';
 
-const AuthContext = createContext();
+// const AuthContext = createContext();
 
-export const AuthProvider = ({ children }) => {
-  const [token, setToken] = useState(null); // means logged in state
-  const [loading, setLoading] = useState(true);
+// export const AuthProvider = ({ children }) => {
+//   const [token, setToken] = useState(null); 
+//   const [loading, setLoading] = useState(true);
 
-  // Check if user is logged in by calling a protected route
-  const checkAuth = async () => {
-    try {
-      await api.get('/quiz/my-quizzes'); // this requires auth middleware
-      setToken('logged_in'); // success means logged in
-    } catch (error) {
-      setToken(null); // unauthorized or error means logged out
-    } finally {
-      setLoading(false);
-    }
-  };
 
+//   const checkAuth = async () => {
+//     try {
+//       await api.get('/quiz/my-quizzes'); 
+//       setToken('logged_in'); //
+//     } catch (error) {
+//       setToken(null); // 
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   useEffect(() => {
+//     checkAuth();
+//   }, []);
+
+//   const login = async (email, password) => {
+//     setLoading(true);
+//     try {
+//       await api.post('/auth/login', { email, password });
+//       await checkAuth(); // refresh auth state after login
+//     } catch (error) {
+//       setToken(null);
+//       throw error;
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   const signup = async (username, email, password) => {
+//     setLoading(true);
+//     try {
+//       await api.post('/auth/signup', { username, email, password });
+//       await checkAuth(); 
+//     } catch (error) {
+//       setToken(null);
+//       throw error;
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   const logout = async () => {
+//     setLoading(true);
+//     try {
+//       await api.post('/auth/logout');
+//       setToken(null);
+//     } catch (error) {
+      
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   return (
+//     <AuthContext.Provider
+//       value={{ token, login, signup, logout, loading, isAuthenticated: !!token }}
+//     >
+//       {children}
+//     </AuthContext.Provider>
+//   );
+// };
+
+// export const useAuth = () => useContext(AuthContext);
+
+import { useState, useEffect } from 'react';
+import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import AuthCard from '../component/AuthCard';
+
+const AuthPage = () => {
+  const { login, signup, isAuthenticated, loading } = useAuth();
+  const navigate = useNavigate();
+
+  const [isLogin, setIsLogin] = useState(true);
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  // Redirect when authenticated
   useEffect(() => {
-    checkAuth();
-  }, []);
+    if (!loading && isAuthenticated) {
+      navigate('/dashboard');
+    }
+  }, [isAuthenticated, loading, navigate]);
 
-  const login = async (email, password) => {
-    setLoading(true);
+  const toggleMode = () => setIsLogin(!isLogin);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     try {
-      await api.post('/auth/login', { email, password });
-      await checkAuth(); // refresh auth state after login
-    } catch (error) {
-      setToken(null);
-      throw error;
-    } finally {
-      setLoading(false);
+      if (isLogin) {
+        await login(email, password);
+      } else {
+        await signup(username, email, password);
+      }
+      // No need to navigate here, useEffect will handle it
+    } catch (err) {
+      alert("Authentication failed: " + (err.response?.data?.message || err.message));
     }
   };
 
-  const signup = async (username, email, password) => {
-    setLoading(true);
-    try {
-      await api.post('/auth/signup', { username, email, password });
-      await checkAuth(); // refresh auth state after signup
-    } catch (error) {
-      setToken(null);
-      throw error;
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const logout = async () => {
-    setLoading(true);
-    try {
-      await api.post('/auth/logout');
-      setToken(null);
-    } catch (error) {
-      // ignore error or handle it
-    } finally {
-      setLoading(false);
-    }
-  };
+  if (loading) return <div className="text-white p-6">Checking authentication...</div>;
 
   return (
-    <AuthContext.Provider
-      value={{ token, login, signup, logout, loading, isAuthenticated: !!token }}
-    >
-      {children}
-    </AuthContext.Provider>
+    <div className="min-h-screen bg-black flex items-center justify-center px-4">
+      <AuthCard
+        title={isLogin ? 'Login to your account' : 'Create a new account'}
+        footer={
+          isLogin ? (
+            <>
+              Don’t have an account?{' '}
+              <button onClick={toggleMode} className="text-blue-400 hover:underline">
+                Sign up
+              </button>
+            </>
+          ) : (
+            <>
+              Already have an account?{' '}
+              <button onClick={toggleMode} className="text-green-400 hover:underline">
+                Log in
+              </button>
+            </>
+          )
+        }
+      >
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {!isLogin && (
+            <input
+              className="w-full p-2 bg-gray-800 rounded text-white placeholder-gray-500"
+              placeholder="Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+            />
+          )}
+          <input
+            className="w-full p-2 bg-gray-800 rounded text-white placeholder-gray-500"
+            placeholder="Email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          <input
+            className="w-full p-2 bg-gray-800 rounded text-white placeholder-gray-500"
+            placeholder="Password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <button
+            className="w-full bg-blue-600 hover:bg-blue-700 transition-colors duration-300 px-4 py-2 rounded font-semibold"
+            type="submit"
+          >
+            {isLogin ? 'Login' : 'Sign Up'}
+          </button>
+        </form>
+      </AuthCard>
+    </div>
   );
 };
 
-export const useAuth = () => useContext(AuthContext);
+export default AuthPage;
