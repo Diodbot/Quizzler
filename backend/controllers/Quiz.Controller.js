@@ -157,12 +157,12 @@ const getAllQuizBelongingUser=async(req,res)=>{
        })
         }
         const quizzesDetails=await Quiz.find({creator:userId});
-        if(!Array.isArray(quizzesDetails) || quizzesDetails.length===0){
-             return res.status(404).json({
-        success:false,
-        message:"No Quizzes found"
-       })
-        }
+       return res.status(200).json({
+  success: true,
+  message: quizzesDetails.length === 0 ? "No quizzes yet" : "All quiz found successfully",
+  quizzesDetails
+});
+
          return res.status(200).json({
         success:true,
         message:"All quiz found successfully",
