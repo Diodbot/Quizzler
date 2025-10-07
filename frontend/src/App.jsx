@@ -9,6 +9,9 @@ import TakeQuiz from './pages/TakeQuiz';
 import QuizTestGivers from './pages/QuizTestGivers';
 import QuizzlerLanding from './pages/LandingPage';
 import VerifyEmail from './pages/VerfiyEmail';
+import ReverifyEmail from './pages/ReverifyEmail';
+import SendResetPassword from './pages/SetNewPassword';
+import ResetPassword from './pages/ResetPassword';
 
 const PrivateRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
@@ -79,7 +82,7 @@ function App() {
             <Route path="/verify/:token" element={<VerifyEmail />} />
             <Route path="/reverify-email" element={<ReverifyEmail />} />
           <Route path="/reset-password" element={<SendResetPassword />} />
-          <Route path="/reset-password/:token" element={<SetNewPassword />} />
+          <Route path="/reset-password/:token" element={<ResetPassword />} />
 
           <Route path="/quiz/:quizId/test-givers" element={<QuizTestGivers />} />
           <Route path="/take-quiz/:quizId" element={<TakeQuiz />} />
