@@ -8,7 +8,7 @@ import { useAuth } from './context/AuthContext';
 import TakeQuiz from './pages/TakeQuiz';
 import QuizTestGivers from './pages/QuizTestGivers';
 import QuizzlerLanding from './pages/LandingPage';
-import VerifyEmail from './pages/VerfiyEmail';
+import VerifyEmail from './pages/VerifiyEmail';
 import ReverifyEmail from './pages/ReverifyEmail';
 import SendResetPassword from './pages/SetNewPassword';
 import ResetPassword from './pages/ResetPassword';
