@@ -13,6 +13,9 @@ const AuthPage = () => {
   const [password, setPassword] = useState('');
 
   useEffect(() => {
+    console.log("isAuthenticated",isAuthenticated);
+    console.log("isAuthenticated",isAuthenticated);
+
     if (!loading && isAuthenticated) {
       navigate('/dashboard');
     }
