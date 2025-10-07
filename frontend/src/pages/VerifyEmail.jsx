@@ -10,7 +10,7 @@ const VerifyEmail = () => {
   useEffect(() => {
     const verify = async () => {
       try {
-        const res = await fetch(`https://quizzler.onrender.com/api/v1/auth/verify-email/${token}`, {
+        const res = await fetch(`https://quizzler-f2k8.onrender.com/api/v1/auth/verify-email/${token}`, {
           method: "GET",
         });
 
