@@ -143,5 +143,5 @@ const AuthPage = () => {
   );
 };
 
-export default AuthPage;import { useState, useEffect } from 'react';
+export default AuthPage;
 // /
