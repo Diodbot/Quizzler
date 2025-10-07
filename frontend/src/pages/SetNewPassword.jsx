@@ -49,7 +49,7 @@ const SendResetPassword = () => {
         </button>
         {message && <p className="mt-4 text-white">{message}</p>}
         <div className="mt-4 text-center">
-          <Link to="/login" className="text-cyan-300 underline hover:text-white">Back to Login</Link>
+          <Link to="/auth" className="text-cyan-300 underline hover:text-white">Back to Login</Link>
         </div>
       </form>
     </div>
